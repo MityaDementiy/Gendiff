@@ -29,6 +29,9 @@
   "bugs": {
     "url": "https://github.com/MityaDementiy/project-lvl2-s487/issues"
   },
+  "jest": {
+    "testEnvironment": "node"
+  },
   "homepage": "https://github.com/MityaDementiy/project-lvl2-s487#readme",
   "devDependencies": {
     "@babel/cli": "^7.5.5",
@@ -36,10 +39,12 @@
     "@babel/node": "^7.5.5",
     "@babel/preset-env": "^7.5.5",
     "babel-eslint": "^10.0.2",
+    "babel-jest": "^24.8.0",
     "eslint": "^6.1.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-babel": "^5.3.0",
-    "eslint-plugin-import": "^2.18.2"
+    "eslint-plugin-import": "^2.18.2",
+    "jest": "^24.8.0"
   },
   "dependencies": {
     "commander": "^3.0.0"

@@ -3,44 +3,32 @@ import path from 'path';
 import _ from 'lodash';
 
 const testDir = '../__tests__/__fixtures__';
-const beforeJson = path.join(testDir, 'before.json');
-const afterJson = path.join(testDir, 'after.json');
+const beforeJson = path.resolve(testDir, 'before.json');
+const afterJson = path.resolve(testDir, 'after.json');
 
 const getDiff = (firstFileContent, secondFileContent) => {
   const firstKeys = Object.keys(firstFileContent);
   const secondKeys = Object.keys(secondFileContent);
-  const sharedKeys = firstKeys.filter((key) => _.has(secondFileContent, key));
-  const beforeOnlyKeys = firstKeys.filter((key) => !_.has(secondFileContent, key));
-  const afterOnlyKeys = secondKeys.filter((key) => !_.has(firstFileContent, key));
-  const sharedEqualKeys = sharedKeys.filter((key) => firstFileContent[key] === secondFileContent[key]);
-  const sharedChangedKeys = sharedKeys.filter((key) => firstFileContent[key] !== secondFileContent[key]);
-  const str = '';
-  const whiteSpace = ' ';
-  const tab = ' ';
-  const beforeOnlyToString = beforeOnlyKeys.reduce(
-    (acc, key) => `${acc} ${tab}- ${key}: ${firstFileContent[key]}\n`, str
-  );
-  const afterOnlyToString = afterOnlyKeys.reduce(
-    (acc, key) => `${acc} ${tab}+ ${key}: ${secondFileContent[key]}\n`, str
-  );
-  const sharedEqualKeysToString = sharedEqualKeys.reduce(
-    (acc, key) => `${acc} ${tab}${whiteSpace} ${key}: ${secondFileContent[key]}\n`, str);
-  
-  const sharedChangedKeysToString = sharedChangedKeys.reduce(
-    (acc, key) => `${acc} ${tab}+ ${key}: ${secondFileContent[key]}\n ${tab}- ${key}: ${firstFileContent[key]}\n`, str);
-  const result = `
-    {
-    ${sharedEqualKeysToString}
-    ${sharedChangedKeysToString}
-    ${beforeOnlyToString}
-    ${afterOnlyToString}
-    }
-  `;
+  const sharedKeys = firstKeys.filter(key => _.has(secondFileContent, key));
+  const beforeOnlyKeys = firstKeys.filter(key => !_.has(secondFileContent, key));
+  const afterOnlyKeys = secondKeys.filter(key => !_.has(firstFileContent, key));
+  const sharedEqualKeys = sharedKeys.filter(key => firstFileContent[key] === secondFileContent[key]);
+  const sharedChangedKeys = sharedKeys.filter(key => firstFileContent[key] !== secondFileContent[key]);
+  const beforeOnlyArray = beforeOnlyKeys.map(key => `  - ${key}: ${firstFileContent[key]}`);
+  const afterOnlyArray = afterOnlyKeys.map(key => `  + ${key}: ${secondFileContent[key]}`);
+  const sharedEqualArray = sharedEqualKeys.map(key => `    ${key}: ${firstFileContent[key]}`);
+  const sharedChangedArray = sharedChangedKeys.map(key => `  + ${key}: ${secondFileContent[key]}\n  - ${key}: ${firstFileContent[key]}`);
+  const beforeOnlyToString = beforeOnlyArray.join('\n');
+  const afterOnlyToString = afterOnlyArray.join('\n');
+  const sharedEqualKeysToString = sharedEqualArray.join('\n');
+  const sharedChangedKeysToString = sharedChangedArray.join('\n');
+  const stringifyedResult = [sharedEqualKeysToString, sharedChangedKeysToString, beforeOnlyToString, afterOnlyToString].join('\n');
+  const result = `{\n${stringifyedResult}\n}`;
   return result;
 };
 
-export default (pathTofirstFile = beforeJson, pathToSecondFile = afterJson) => {
-  const beforeFileContent = JSON.parse(fs.readFileSync(pathTofirstFile, 'utf-8'));
-  const afterFileContent = JSON.parse(fs.readFileSync(pathToSecondFile, 'utf-8'));
+export default (firstConfig = beforeJson, secondConfig = afterJson) => {
+  const beforeFileContent = JSON.parse(fs.readFileSync(firstConfig, 'utf-8'));
+  const afterFileContent = JSON.parse(fs.readFileSync(secondConfig, 'utf-8'));
   return getDiff(beforeFileContent, afterFileContent);
 };

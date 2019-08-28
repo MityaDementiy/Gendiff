@@ -9,15 +9,19 @@ const afterJson = path.resolve(testDir, 'after.json');
 const getDiff = (firstFileContent, secondFileContent) => {
   const firstKeys = Object.keys(firstFileContent);
   const secondKeys = Object.keys(secondFileContent);
-  const sharedKeys = firstKeys.filter(key => _.has(secondFileContent, key));
-  const beforeOnlyKeys = firstKeys.filter(key => !_.has(secondFileContent, key));
-  const afterOnlyKeys = secondKeys.filter(key => !_.has(firstFileContent, key));
-  const sharedEqualKeys = sharedKeys.filter(key => firstFileContent[key] === secondFileContent[key]);
-  const sharedChangedKeys = sharedKeys.filter(key => firstFileContent[key] !== secondFileContent[key]);
-  const beforeOnlyArray = beforeOnlyKeys.map(key => `  - ${key}: ${firstFileContent[key]}`);
-  const afterOnlyArray = afterOnlyKeys.map(key => `  + ${key}: ${secondFileContent[key]}`);
-  const sharedEqualArray = sharedEqualKeys.map(key => `    ${key}: ${firstFileContent[key]}`);
-  const sharedChangedArray = sharedChangedKeys.map(key => `  + ${key}: ${secondFileContent[key]}\n  - ${key}: ${firstFileContent[key]}`);
+  const sharedKeys = firstKeys.filter((key) => _.has(secondFileContent, key));
+  const beforeOnlyKeys = firstKeys.filter((key) => !_.has(secondFileContent, key));
+  const afterOnlyKeys = secondKeys.filter((key) => !_.has(firstFileContent, key));
+  const sharedEqualKeys = sharedKeys.filter(
+    (key) => firstFileContent[key] === secondFileContent[key],
+  );
+  const sharedChangedKeys = sharedKeys.filter(
+    (key) => firstFileContent[key] !== secondFileContent[key],
+  );
+  const beforeOnlyArray = beforeOnlyKeys.map((key) => `  - ${key}: ${firstFileContent[key]}`);
+  const afterOnlyArray = afterOnlyKeys.map((key) => `  + ${key}: ${secondFileContent[key]}`);
+  const sharedEqualArray = sharedEqualKeys.map((key) => `    ${key}: ${firstFileContent[key]}`);
+  const sharedChangedArray = sharedChangedKeys.map((key) => `  + ${key}: ${secondFileContent[key]}\n  - ${key}: ${firstFileContent[key]}`);
   const beforeOnlyToString = beforeOnlyArray.join('\n');
   const afterOnlyToString = afterOnlyArray.join('\n');
   const sharedEqualKeysToString = sharedEqualArray.join('\n');

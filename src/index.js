@@ -1,10 +1,5 @@
 import fs from 'fs';
-import path from 'path';
 import _ from 'lodash';
-
-const testDir = '../__tests__/__fixtures__';
-const beforeJson = path.resolve(testDir, 'before.json');
-const afterJson = path.resolve(testDir, 'after.json');
 
 const getDiff = (firstFileContent, secondFileContent) => {
   const firstKeys = Object.keys(firstFileContent);
@@ -22,16 +17,17 @@ const getDiff = (firstFileContent, secondFileContent) => {
   const afterOnlyArray = afterOnlyKeys.map((key) => `  + ${key}: ${secondFileContent[key]}`);
   const sharedEqualArray = sharedEqualKeys.map((key) => `    ${key}: ${firstFileContent[key]}`);
   const sharedChangedArray = sharedChangedKeys.map((key) => `  + ${key}: ${secondFileContent[key]}\n  - ${key}: ${firstFileContent[key]}`);
-  const beforeOnlyToString = beforeOnlyArray.join('\n');
-  const afterOnlyToString = afterOnlyArray.join('\n');
-  const sharedEqualKeysToString = sharedEqualArray.join('\n');
-  const sharedChangedKeysToString = sharedChangedArray.join('\n');
-  const stringifyedResult = [sharedEqualKeysToString, sharedChangedKeysToString, beforeOnlyToString, afterOnlyToString].join('\n');
-  const result = `{\n${stringifyedResult}\n}`;
+  const beforeOnlyToStr = beforeOnlyArray.join('\n');
+  const afterOnlyToStr = afterOnlyArray.join('\n');
+  const sharedEqualKeysToStr = sharedEqualArray.join('\n');
+  const sharedChangedKeysToStr = sharedChangedArray.join('\n');
+  const dataToStr = [beforeOnlyToStr, afterOnlyToStr, sharedChangedKeysToStr, sharedEqualKeysToStr];
+  const stringifyedFilteredResult = dataToStr.filter((el) => el.length >= 1);
+  const result = `{\n${stringifyedFilteredResult.join('\n')}\n}`;
   return result;
 };
 
-export default (firstConfig = beforeJson, secondConfig = afterJson) => {
+export default (firstConfig, secondConfig) => {
   const beforeFileContent = JSON.parse(fs.readFileSync(firstConfig, 'utf-8'));
   const afterFileContent = JSON.parse(fs.readFileSync(secondConfig, 'utf-8'));
   return getDiff(beforeFileContent, afterFileContent);

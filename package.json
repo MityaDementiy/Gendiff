@@ -1,10 +1,9 @@
 {
-  "name": "project-lvl2-s487",
+  "name": "gendiff",
   "version": "1.0.0",
   "description": "",
   "bin": {
-    "gendiff": "dist/bin/gendiff.js",
-    "gendiff -h": "dist/bin/gendiff.js"
+    "gendiff": "dist/bin/gendiff.js"
   },
   "files": [
     "dist"

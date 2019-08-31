@@ -1,5 +1,7 @@
-import fs from 'fs';
 import _ from 'lodash';
+import fs from 'fs';
+import path from 'path';
+import parseFile from './parsers';
 
 const getDiff = (firstFileContent, secondFileContent) => {
   const firstKeys = Object.keys(firstFileContent);
@@ -28,7 +30,9 @@ const getDiff = (firstFileContent, secondFileContent) => {
 };
 
 export default (firstConfig, secondConfig) => {
-  const beforeFileContent = JSON.parse(fs.readFileSync(firstConfig, 'utf-8'));
-  const afterFileContent = JSON.parse(fs.readFileSync(secondConfig, 'utf-8'));
+  const firstExtName = path.extname(firstConfig);
+  const secondExtName = path.extname(secondConfig);
+  const beforeFileContent = parseFile(fs.readFileSync(firstConfig, 'utf-8'), firstExtName);
+  const afterFileContent = parseFile(fs.readFileSync(secondConfig, 'utf-8'), secondExtName);
   return getDiff(beforeFileContent, afterFileContent);
 };

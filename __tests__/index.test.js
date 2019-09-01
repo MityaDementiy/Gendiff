@@ -8,12 +8,13 @@ const beforeJson = path.resolve(testDir, 'before.json');
 const afterJson = path.resolve(testDir, 'after.json');
 const beforeYml = path.resolve(testDir, 'before.yml');
 const afterYml = path.resolve(testDir, 'after.yml');
-const expectedResultFlatJsonAndYml = fs.readFileSync(path.resolve(testDir, 'expectedFlatJson'), 'utf-8');
+const beforeIni = path.resolve(testDir, 'before.ini');
+const afterIni = path.resolve(testDir, 'after.ini');
 
-test('genDiff with flat Json', () => {
-  expect(genDiff(beforeJson, afterJson)).toEqual(expectedResultFlatJsonAndYml);
-});
+const expectedResult = fs.readFileSync(path.resolve(testDir, 'expectedFlatJson'), 'utf-8');
 
-test('genDiff with flat Yaml', () => {
-  expect(genDiff(beforeYml, afterYml)).toEqual(expectedResultFlatJsonAndYml);
+const filesToTest = [[beforeJson, afterJson], [beforeYml, afterYml], [beforeIni, afterIni]];
+
+test.each(filesToTest)('test genDiff', (firstFile, secondFile) => {
+  expect(genDiff(firstFile, secondFile)).toEqual(expectedResult);
 });

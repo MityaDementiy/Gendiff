@@ -4,10 +4,6 @@
 
 [![Maintainability](https://api.codeclimate.com/v1/badges/7bbef321bddbe31911d2/maintainability)](https://codeclimate.com/github/MityaDementiy/project-lvl2-s487/maintainability)
 
-Comparing JSON and YAML files:
+Installation and use:
 
-[![asciicast](https://asciinema.org/a/tYroKBnsJY76Aas79vxCEVQHU.svg)](https://asciinema.org/a/tYroKBnsJY76Aas79vxCEVQHU)
-
-Installation and comparing JSON files:
-
-[![asciicast](https://asciinema.org/a/hQYTHe3u7R6jpCGWHmQj7TL3v.svg)](https://asciinema.org/a/hQYTHe3u7R6jpCGWHmQj7TL3v)
+[![asciicast](https://asciinema.org/a/ErKIdSQhk4hJTxswxh7BI6NR9.svg)](https://asciinema.org/a/ErKIdSQhk4hJTxswxh7BI6NR9)

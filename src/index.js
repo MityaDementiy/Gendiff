@@ -2,31 +2,65 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import parseFile from './parsers';
+/*
 
-const getDiff = (firstFileContent, secondFileContent) => {
-  const firstKeys = Object.keys(firstFileContent);
-  const secondKeys = Object.keys(secondFileContent);
-  const sharedKeys = firstKeys.filter((key) => _.has(secondFileContent, key));
-  const beforeOnlyKeys = firstKeys.filter((key) => !_.has(secondFileContent, key));
-  const afterOnlyKeys = secondKeys.filter((key) => !_.has(firstFileContent, key));
-  const sharedEqualKeys = sharedKeys.filter(
-    (key) => firstFileContent[key] === secondFileContent[key],
-  );
-  const sharedChangedKeys = sharedKeys.filter(
-    (key) => firstFileContent[key] !== secondFileContent[key],
-  );
-  const beforeOnlyArray = beforeOnlyKeys.map((key) => `  - ${key}: ${firstFileContent[key]}`);
-  const afterOnlyArray = afterOnlyKeys.map((key) => `  + ${key}: ${secondFileContent[key]}`);
-  const sharedEqualArray = sharedEqualKeys.map((key) => `    ${key}: ${firstFileContent[key]}`);
-  const sharedChangedArray = sharedChangedKeys.map((key) => `  + ${key}: ${secondFileContent[key]}\n  - ${key}: ${firstFileContent[key]}`);
-  const beforeOnlyToStr = beforeOnlyArray.join('\n');
-  const afterOnlyToStr = afterOnlyArray.join('\n');
-  const sharedEqualKeysToStr = sharedEqualArray.join('\n');
-  const sharedChangedKeysToStr = sharedChangedArray.join('\n');
-  const dataToStr = [beforeOnlyToStr, afterOnlyToStr, sharedChangedKeysToStr, sharedEqualKeysToStr];
-  const stringifyedFilteredResult = dataToStr.filter((el) => el.length >= 1);
-  const result = `{\n${stringifyedFilteredResult.join('\n')}\n}`;
-  return result;
+deleted - {name: keyName, type: type, oldValue: oldValue}
+added - {name: keyName, type: type, newValue: newValue}
+unchanged - {name: keyName, type: type, oldValue: oldValue}
+changed - {name: keyName, type: type, oldValue: oldValue, newValue: newValue}
+
+*/
+const getType = (key, firstObject, secondObject) => {
+  if (_.isObject(firstObject[key]) && _.isObject(secondObject[key])) {
+    return 'parent';
+  }
+  
+  if (_.has(firstObject, key) && !_.has(secondObject, key)) {
+    return 'deleted';
+  }
+
+  if (!_.has(firstObject, key) && _.has(secondObject, key)) {
+    return 'added';
+  }
+
+  if (_.has(firstObject, key) && _.has(secondObject, key) && firstObject[key] === secondObject[key]) {
+    return 'unchanged';
+  }
+
+  if (_.has(firstObject, key) && _.has(secondObject, key) && firstObject[key] !== secondObject[key]) {
+    return 'changed';
+  }
+};
+
+const buildNode = (type, key, oldValue, newValue, getDiffFunc) => {
+  if (type === 'parent') {
+    const children = getDiffFunc(oldValue, newValue);
+    return {
+      key,
+      type,
+      children,
+    }
+  }
+  return {
+    key,
+    type,
+    oldValue,
+    newValue,
+  };
+};
+
+const getDiff = (firstConfig, secondConfig) => {
+  const firstKeys = Object.keys(firstConfig);
+  const secondKeys = Object.keys(secondConfig);
+  const unitedKeys = _.union(firstKeys, secondKeys);
+  const innerStructure = unitedKeys.map((key) => {
+    const type = getType(key, firstConfig, secondConfig);
+    const oldValue = firstConfig[key];
+    const newValue = secondConfig[key];
+    const node = buildNode(type, key, oldValue, newValue, getDiff);
+    return node;
+  });
+  console.log(innerStructure);
 };
 
 export default (firstConfig, secondConfig) => {

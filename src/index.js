@@ -39,7 +39,7 @@ const buildNode = (type, key, oldValue, newValue, getDiffFunc) => {
       key,
       type,
       children,
-    }
+    };
   }
   return {
     key,
@@ -60,7 +60,7 @@ const getDiff = (firstConfig, secondConfig) => {
     const node = buildNode(type, key, oldValue, newValue, getDiff);
     return node;
   });
-  console.log(innerStructure);
+  return innerStructure;
 };
 
 export default (firstConfig, secondConfig) => {
@@ -68,5 +68,6 @@ export default (firstConfig, secondConfig) => {
   const secondExtName = path.extname(secondConfig);
   const beforeFileContent = parseFile(fs.readFileSync(firstConfig, 'utf-8'), firstExtName);
   const afterFileContent = parseFile(fs.readFileSync(secondConfig, 'utf-8'), secondExtName);
-  return getDiff(beforeFileContent, afterFileContent);
+  const result = getDiff(beforeFileContent, afterFileContent);
+  return result;
 };

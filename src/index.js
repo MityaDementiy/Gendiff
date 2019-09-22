@@ -14,19 +14,15 @@ const getType = (key, firstObject, secondObject) => {
   if (_.isObject(firstObject[key]) && _.isObject(secondObject[key])) {
     return 'parent';
   }
-  
   if (_.has(firstObject, key) && !_.has(secondObject, key)) {
     return 'deleted';
   }
-
   if (!_.has(firstObject, key) && _.has(secondObject, key)) {
     return 'added';
   }
-
   if (_.has(firstObject, key) && _.has(secondObject, key) && firstObject[key] === secondObject[key]) {
     return 'unchanged';
   }
-
   if (_.has(firstObject, key) && _.has(secondObject, key) && firstObject[key] !== secondObject[key]) {
     return 'changed';
   }
@@ -60,7 +56,27 @@ const getDiff = (firstConfig, secondConfig) => {
     const node = buildNode(type, key, oldValue, newValue, getDiff);
     return node;
   });
+  console.log(typeof innerStructure);
   return innerStructure;
+};
+
+const renderDiff = (ast) => {
+  const result = ast.map((node) => {
+    if (node.type === 'added') {
+      return `  + ${node.key}: ${node.newValue}`;
+    }
+    if (node.type === 'deleted') {
+      return `  - ${node.key}: ${node.oldValue}`;
+    }
+    if (node.type === 'unchanged') {
+      return `    ${node.key}: ${node.oldValue}`;
+    }
+    if (node.type === 'changed') {
+      return `  - ${node.key}: ${node.oldValue}\n  + ${node.key}: ${node.newValue}`;
+    }
+  });
+  console.log(typeof result.join('\n'));
+  return `{\n${result.join('\n')}\n}`;
 };
 
 export default (firstConfig, secondConfig) => {
@@ -68,6 +84,6 @@ export default (firstConfig, secondConfig) => {
   const secondExtName = path.extname(secondConfig);
   const beforeFileContent = parseFile(fs.readFileSync(firstConfig, 'utf-8'), firstExtName);
   const afterFileContent = parseFile(fs.readFileSync(secondConfig, 'utf-8'), secondExtName);
-  const result = getDiff(beforeFileContent, afterFileContent);
+  const result = renderDiff(getDiff(beforeFileContent, afterFileContent));
   return result;
 };

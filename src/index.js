@@ -56,26 +56,36 @@ const getDiff = (firstConfig, secondConfig) => {
     const node = buildNode(type, key, oldValue, newValue, getDiff);
     return node;
   });
-  console.log(typeof innerStructure);
   return innerStructure;
+};
+
+const stringify = (value) => {
+  if (_.isObject(value)) {
+    const keys = Object.keys(value);
+    const result = keys.map((key) => `    ${stringify(value[key])}`).join('\n');
+    return `{\n  ${result}\n  }`;
+  }
+  return value;
 };
 
 const renderDiff = (ast) => {
   const result = ast.map((node) => {
+    if (node.type === 'parent') {
+      return `    ${node.key}: ${stringify(renderDiff(node.children))}`;
+    }
     if (node.type === 'added') {
-      return `  + ${node.key}: ${node.newValue}`;
+      return `  + ${node.key}: ${stringify(node.newValue)}`;
     }
     if (node.type === 'deleted') {
-      return `  - ${node.key}: ${node.oldValue}`;
+      return `  - ${node.key}: ${stringify(node.oldValue)}`;
     }
     if (node.type === 'unchanged') {
-      return `    ${node.key}: ${node.oldValue}`;
+      return `    ${node.key}: ${stringify(node.oldValue)}`;
     }
     if (node.type === 'changed') {
       return `  - ${node.key}: ${node.oldValue}\n  + ${node.key}: ${node.newValue}`;
     }
   });
-  console.log(typeof result.join('\n'));
   return `{\n${result.join('\n')}\n}`;
 };
 

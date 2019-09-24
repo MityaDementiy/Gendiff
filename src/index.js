@@ -2,14 +2,7 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import parseFile from './parsers';
-/*
 
-deleted - {name: keyName, type: type, oldValue: oldValue}
-added - {name: keyName, type: type, newValue: newValue}
-unchanged - {name: keyName, type: type, oldValue: oldValue}
-changed - {name: keyName, type: type, oldValue: oldValue, newValue: newValue}
-
-*/
 const getType = (key, firstObject, secondObject) => {
   if (_.isObject(firstObject[key]) && _.isObject(secondObject[key])) {
     return 'parent';
@@ -83,7 +76,7 @@ const renderDiff = (ast) => {
       return `    ${node.key}: ${stringify(node.oldValue)}`;
     }
     if (node.type === 'changed') {
-      return `  - ${node.key}: ${node.oldValue}\n  + ${node.key}: ${node.newValue}`;
+      return `  - ${node.key}: ${stringify(node.oldValue)}\n  + ${node.key}: ${stringify(node.newValue)}`;
     }
   });
   return `{\n${result.join('\n')}\n}`;

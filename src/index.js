@@ -55,7 +55,7 @@ const getDiff = (firstConfig, secondConfig) => {
 const stringify = (value) => {
   if (_.isObject(value)) {
     const keys = Object.keys(value);
-    const result = keys.map((key) => `    ${stringify(value[key])}`).join('\n');
+    const result = keys.map((key) => `    ${key}: ${stringify(value[key])}`).join('\n');
     return `{\n  ${result}\n  }`;
   }
   return value;

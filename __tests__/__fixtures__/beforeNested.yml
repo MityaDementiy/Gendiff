@@ -3,11 +3,11 @@ common:
   setting2: "200"
   setting3: true
   setting6:
-  key: "value"
+    key: "value"
 group1:
   baz: "bas"
   foo: "bar"
   nest:
-  key: "value"
+    key: "value"
 group2:
   abc: "12345"

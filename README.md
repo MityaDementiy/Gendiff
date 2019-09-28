@@ -6,4 +6,4 @@
 
 Installation and use:
 
-[![asciicast](https://asciinema.org/a/ErKIdSQhk4hJTxswxh7BI6NR9.svg)](https://asciinema.org/a/ErKIdSQhk4hJTxswxh7BI6NR9)
+[![asciicast](https://asciinema.org/a/lz4VmS7LUxlTJJrLAUrGcHvsU.svg)](https://asciinema.org/a/lz4VmS7LUxlTJJrLAUrGcHvsU)

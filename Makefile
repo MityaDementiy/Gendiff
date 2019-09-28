@@ -19,8 +19,14 @@ startYaml:
 startIni:
 		npx babel-node -- src/bin/gendiff.js './__tests__/__fixtures__/before.ini' './__tests__/__fixtures__/after.ini'
 
-startTree:
+startTreeJson:
 		npx babel-node -- src/bin/gendiff.js './__tests__/__fixtures__/beforeNested.json' './__tests__/__fixtures__/afterNested.json'
+
+startTreeYml:
+		npx babel-node -- src/bin/gendiff.js './__tests__/__fixtures__/beforeNested.yml' './__tests__/__fixtures__/afterNested.yml'
+
+startTreeIni:
+		npx babel-node -- src/bin/gendiff.js './__tests__/__fixtures__/beforeNested.ini' './__tests__/__fixtures__/afterNested.ini'
 
 lint:
 		npx eslint .

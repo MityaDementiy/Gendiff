@@ -1,22 +1,24 @@
+/* eslint-disable consistent-return */
+/* eslint-disable array-callback-return */
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import parseFile from './parsers';
 
-const getType = (key, firstObject, secondObject) => {
-  if (_.isObject(firstObject[key]) && _.isObject(secondObject[key])) {
+const getType = (key, firstObj, secondObj) => {
+  if (_.isObject(firstObj[key]) && _.isObject(secondObj[key])) {
     return 'parent';
   }
-  if (_.has(firstObject, key) && !_.has(secondObject, key)) {
+  if (_.has(firstObj, key) && !_.has(secondObj, key)) {
     return 'deleted';
   }
-  if (!_.has(firstObject, key) && _.has(secondObject, key)) {
+  if (!_.has(firstObj, key) && _.has(secondObj, key)) {
     return 'added';
   }
-  if (_.has(firstObject, key) && _.has(secondObject, key) && firstObject[key] === secondObject[key]) {
+  if (_.has(firstObj, key) && _.has(secondObj, key) && firstObj[key] === secondObj[key]) {
     return 'unchanged';
   }
-  if (_.has(firstObject, key) && _.has(secondObject, key) && firstObject[key] !== secondObject[key]) {
+  if (_.has(firstObj, key) && _.has(secondObj, key) && firstObj[key] !== secondObj[key]) {
     return 'changed';
   }
 };
@@ -52,34 +54,37 @@ const getDiff = (firstConfig, secondConfig) => {
   return innerStructure;
 };
 
-const stringify = (value) => {
+const makeTab = (nestingLevel) => '  '.repeat(nestingLevel);
+
+const stringify = (value, nesting) => {
   if (_.isObject(value)) {
     const keys = Object.keys(value);
-    const result = keys.map((key) => `    ${key}: ${stringify(value[key])}`).join('\n');
-    return `{\n  ${result}\n  }`;
+    const result = keys.map((key) => `${makeTab(nesting + 2)}${key}: ${value[key]}`).join('\n');
+    return `{\n${result}\n${makeTab(nesting)}}`;
   }
   return value;
 };
 
-const renderDiff = (ast) => {
-  const result = ast.map((node) => {
+const renderDiff = (ast, nesting = 2) => {
+  const mappedAst = ast.map((node) => {
     if (node.type === 'parent') {
-      return `    ${node.key}: ${stringify(renderDiff(node.children))}`;
+      return `${makeTab(nesting)}${node.key}: ${stringify(renderDiff(node.children, nesting + 2))}`;
     }
     if (node.type === 'added') {
-      return `  + ${node.key}: ${stringify(node.newValue)}`;
+      return `${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
     }
     if (node.type === 'deleted') {
-      return `  - ${node.key}: ${stringify(node.oldValue)}`;
+      return `${makeTab(nesting - 1)}- ${node.key}: ${stringify(node.oldValue, nesting)}`;
     }
     if (node.type === 'unchanged') {
-      return `    ${node.key}: ${stringify(node.oldValue)}`;
+      return `${makeTab(nesting)}${node.key}: ${stringify(node.oldValue, nesting)}`;
     }
     if (node.type === 'changed') {
-      return `  - ${node.key}: ${stringify(node.oldValue)}\n  + ${node.key}: ${stringify(node.newValue)}`;
+      return `${makeTab(nesting - 1)}- ${node.key}: ${stringify(node.oldValue, nesting)}\n${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
     }
   });
-  return `{\n${result.join('\n')}\n}`;
+  const result = `{\n${mappedAst.join('\n')}\n${makeTab(nesting - 2)}}`;
+  return result;
 };
 
 export default (firstConfig, secondConfig) => {

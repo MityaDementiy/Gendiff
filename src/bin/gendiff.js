@@ -11,7 +11,7 @@ program
   .option('-V, --version', 'output usage information')
   .option('-f, --format [type]', 'Output format')
   .action((firstConfig, secondConfig) => {
-    console.log(genDiff(firstConfig, secondConfig));
+    console.log(genDiff(firstConfig, secondConfig, program.format));
   })
   .parse(process.argv);
 

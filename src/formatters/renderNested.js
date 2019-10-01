@@ -13,10 +13,10 @@ const stringify = (value, nesting) => {
   return value;
 };
 
-const renderCurlyDiff = (ast, nesting = 2) => {
+const renderDefaultDiff = (ast, nesting = 2) => {
   const mappedAst = ast.map((node) => {
     if (node.type === 'parent') {
-      return `${makeTab(nesting)}${node.key}: ${stringify(renderCurlyDiff(node.children, nesting + 2))}`;
+      return `${makeTab(nesting)}${node.key}: ${stringify(renderDefaultDiff(node.children, nesting + 2))}`;
     }
     if (node.type === 'added') {
       return `${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
@@ -34,4 +34,4 @@ const renderCurlyDiff = (ast, nesting = 2) => {
   const result = `{\n${mappedAst.join('\n')}\n${makeTab(nesting - 2)}}`;
   return result;
 };
-export default renderCurlyDiff;
+export default renderDefaultDiff;

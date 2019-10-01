@@ -3,7 +3,7 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import parseFile from './parsers';
-import renderCurlyDiff from './formatters/renderNested';
+import render from './formatters/renderers';
 
 const getType = (key, firstObj, secondObj) => {
   if (_.isObject(firstObj[key]) && _.isObject(secondObj[key])) {
@@ -54,11 +54,11 @@ const getDiff = (firstConfig, secondConfig) => {
   return innerStructure;
 };
 
-export default (firstConfig, secondConfig) => {
+export default (firstConfig, secondConfig, format) => {
   const firstExtName = path.extname(firstConfig);
   const secondExtName = path.extname(secondConfig);
   const beforeFileContent = parseFile(fs.readFileSync(firstConfig, 'utf-8'), firstExtName);
   const afterFileContent = parseFile(fs.readFileSync(secondConfig, 'utf-8'), secondExtName);
-  const result = renderCurlyDiff(getDiff(beforeFileContent, afterFileContent));
+  const result = render(getDiff(beforeFileContent, afterFileContent), format);
   return result;
 };

@@ -19,6 +19,8 @@ const afterNestedIni = path.resolve(testDir, 'afterNested.ini');
 
 const expectedResult = fs.readFileSync(path.resolve(testDir, 'expectedFlatJson'), 'utf-8');
 const expectedNested = fs.readFileSync(path.resolve(testDir, 'expectedNested'), 'utf-8');
+const expectedPlain = fs.readFileSync(path.resolve(testDir, 'expectedPlain'), 'utf-8');
+const plainFormat = 'plain';
 const filesToTest = [[beforeJson, afterJson], [beforeYml, afterYml], [beforeIni, afterIni]];
 
 test.each(filesToTest)('test genDiff', (firstFile, secondFile) => {
@@ -35,4 +37,8 @@ test('gendiff with nested yml', () => {
 
 test('gendiff with nested ini', () => {
   expect(genDiff(beforeNestedIni, afterNestedIni)).toEqual(expectedNested);
+});
+
+test('gendiff with plain', () => {
+  expect(genDiff(beforeNestedJson, afterNestedJson, plainFormat)).toEqual(expectedPlain);
 });

@@ -1,4 +1,3 @@
-/* eslint-disable consistent-return */
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
@@ -21,6 +20,7 @@ const getType = (key, firstObj, secondObj) => {
   if (_.has(firstObj, key) && _.has(secondObj, key) && firstObj[key] !== secondObj[key]) {
     return 'changed';
   }
+  return null;
 };
 
 const buildNode = (type, key, oldValue, newValue, getDiffFunc) => {

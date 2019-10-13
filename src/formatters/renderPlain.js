@@ -1,5 +1,3 @@
-/* eslint-disable consistent-return */
-/* eslint-disable array-callback-return */
 import _ from 'lodash';
 
 const makeCorrectValue = (val) => {
@@ -32,6 +30,7 @@ const renderPlainDiff = (ast, path = '') => {
       if (node.type === 'parent') {
         return renderPlainDiff(node.children, nestedPath);
       }
+      return null;
     });
   return mappedAst.join('\n');
 };

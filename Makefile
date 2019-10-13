@@ -31,5 +31,8 @@ startTreeIni:
 startPlain:
 		npx babel-node -- src/bin/gendiff.js --format plain './__tests__/__fixtures__/beforeNested.yml' './__tests__/__fixtures__/afterNested.yml'
 
+startJsonFormat:
+		npx babel-node -- src/bin/gendiff.js --format json './__tests__/__fixtures__/beforeNested.yml' './__tests__/__fixtures__/afterNested.yml'
+
 lint:
 		npx eslint .

@@ -1,5 +1,3 @@
-/* eslint-disable consistent-return */
-/* eslint-disable array-callback-return */
 import _ from 'lodash';
 
 const makeTab = (nestingLevel) => '  '.repeat(nestingLevel);
@@ -30,6 +28,7 @@ const renderDefaultDiff = (ast, nesting = 2) => {
     if (node.type === 'changed') {
       return `${makeTab(nesting - 1)}- ${node.key}: ${stringify(node.oldValue, nesting)}\n${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
     }
+    return null;
   });
   const result = `{\n${mappedAst.join('\n')}\n${makeTab(nesting - 2)}}`;
   return result;

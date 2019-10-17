@@ -2,43 +2,26 @@ import path from 'path';
 import fs from 'fs';
 import genDiff from '../src';
 
-
 const testDir = './__tests__/__fixtures__';
-const beforeJson = path.resolve(testDir, 'before.json');
-const afterJson = path.resolve(testDir, 'after.json');
-const beforeYml = path.resolve(testDir, 'before.yml');
-const afterYml = path.resolve(testDir, 'after.yml');
-const beforeIni = path.resolve(testDir, 'before.ini');
-const afterIni = path.resolve(testDir, 'after.ini');
-const beforeNestedJson = path.resolve(testDir, 'beforeNested.json');
-const afterNestedJson = path.resolve(testDir, 'afterNested.json');
-const beforeNestedYml = path.resolve(testDir, 'beforeNested.yml');
-const afterNestedYml = path.resolve(testDir, 'afterNested.yml');
-const beforeNestedIni = path.resolve(testDir, 'beforeNested.ini');
-const afterNestedIni = path.resolve(testDir, 'afterNested.ini');
 
-const expectedResult = fs.readFileSync(path.resolve(testDir, 'expectedFlatJson'), 'utf-8');
-const expectedNested = fs.readFileSync(path.resolve(testDir, 'expectedNested'), 'utf-8');
-const expectedPlain = fs.readFileSync(path.resolve(testDir, 'expectedPlain'), 'utf-8');
-const plainFormat = 'plain';
-const filesToTest = [[beforeJson, afterJson], [beforeYml, afterYml], [beforeIni, afterIni]];
+const flatConfigsToTest = [
+  [path.resolve(testDir, 'before.json'), path.resolve(testDir, 'after.json')],
+  [path.resolve(testDir, 'before.yml'), path.resolve(testDir, 'after.yml')],
+  [path.resolve(testDir, 'before.ini'), path.resolve(testDir, 'after.ini')],
+];
 
-test.each(filesToTest)('test genDiff', (firstFile, secondFile) => {
-  expect(genDiff(firstFile, secondFile)).toEqual(expectedResult);
+const nestedConfigsToTest = [
+  [path.resolve(testDir, 'beforeNested.json'), path.resolve(testDir, 'afterNested.json')],
+  [path.resolve(testDir, 'beforeNested.yml'), path.resolve(testDir, 'afterNested.yml')],
+  [path.resolve(testDir, 'beforeNested.ini'), path.resolve(testDir, 'afterNested.ini')],
+];
+
+test.each(flatConfigsToTest)('test genDiff with flat configs', (beforeFileContent, afterFileContent) => {
+  expect(genDiff(beforeFileContent, afterFileContent)).toEqual(fs.readFileSync(path.resolve(testDir, 'expectedFlatJson'), 'utf-8'));
 });
 
-test('gendiff with nested json', () => {
-  expect(genDiff(beforeNestedJson, afterNestedJson)).toEqual(expectedNested);
-});
-
-test('gendiff with nested yml', () => {
-  expect(genDiff(beforeNestedYml, afterNestedYml)).toEqual(expectedNested);
-});
-
-test('gendiff with nested ini', () => {
-  expect(genDiff(beforeNestedIni, afterNestedIni)).toEqual(expectedNested);
-});
-
-test('gendiff with plain', () => {
-  expect(genDiff(beforeNestedJson, afterNestedJson, plainFormat)).toEqual(expectedPlain);
+test.each(nestedConfigsToTest)('test genDiff with nested configs and formatted output', (beforeFileContent, afterFileContent) => {
+  expect(genDiff(beforeFileContent, afterFileContent)).toEqual(fs.readFileSync(path.resolve(testDir, 'expectedNested'), 'utf-8'));
+  expect(genDiff(beforeFileContent, afterFileContent, 'plain')).toEqual(fs.readFileSync(path.resolve(testDir, 'expectedPlain'), 'utf-8'));
+  expect(genDiff(beforeFileContent, afterFileContent, 'json')).toEqual(fs.readFileSync(path.resolve(testDir, 'expectedJson'), 'utf-8'));
 });

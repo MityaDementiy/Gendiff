@@ -25,10 +25,7 @@ const renderDefaultDiff = (ast, nesting = 2) => {
     if (node.type === 'unchanged') {
       return `${makeTab(nesting)}${node.key}: ${stringify(node.oldValue, nesting)}`;
     }
-    if (node.type === 'changed') {
-      return `${makeTab(nesting - 1)}- ${node.key}: ${stringify(node.oldValue, nesting)}\n${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
-    }
-    return null;
+    return `${makeTab(nesting - 1)}- ${node.key}: ${stringify(node.oldValue, nesting)}\n${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
   });
   const result = `{\n${mappedAst.join('\n')}\n${makeTab(nesting - 2)}}`;
   return result;

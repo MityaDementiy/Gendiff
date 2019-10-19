@@ -2,11 +2,12 @@ import fs from 'fs';
 import genDiff from '../src';
 
 const testDir = './__tests__/__fixtures__';
-const expectedFlat = fs.readFileSync(`${testDir}/expectedFlat`, 'utf-8');
-const expectedNested = fs.readFileSync(`${testDir}/expectedNested`, 'utf-8');
-const expectedFlatPlain = fs.readFileSync(`${testDir}/expectedFlatPlain`, 'utf-8');
-const expectedNestedPlain = fs.readFileSync(`${testDir}/expectedPlain`, 'utf-8');
-const expectedNestedJson = fs.readFileSync(`${testDir}/expectedJson`, 'utf-8');
+const getDataFromFile = (fileName) => fs.readFileSync(`${testDir}/${fileName}`, 'utf-8');
+const expectedFlat = getDataFromFile('expectedFlat');
+const expectedNested = getDataFromFile('expectedNested');
+const expectedFlatPlain = getDataFromFile('expectedFlatPlain');
+const expectedNestedPlain = getDataFromFile('expectedPlain');
+const expectedNestedJson = getDataFromFile('expectedJson');
 const flatJsonConfigs = [`${testDir}/before.json`, `${testDir}/after.json`];
 const flatYmlConfigs = [`${testDir}/before.yml`, `${testDir}/after.yml`];
 const flatIniConfigs = [`${testDir}/before.ini`, `${testDir}/after.ini`];

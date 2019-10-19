@@ -1,21 +1,35 @@
-import path from 'path';
 import fs from 'fs';
 import genDiff from '../src';
 
 const testDir = './__tests__/__fixtures__';
+const expectedFlat = fs.readFileSync(`${testDir}/expectedFlat`, 'utf-8');
+const expectedNested = fs.readFileSync(`${testDir}/expectedNested`, 'utf-8');
+const flatJsonConfigs = [`${testDir}/before.json`, `${testDir}/after.json`];
+const flatYmlConfigs = [`${testDir}/before.yml`, `${testDir}/after.yml`];
+const flatIniConfigs = [`${testDir}/before.ini`, `${testDir}/after.ini`];
+const nestedJsonConfigs = [`${testDir}/beforeNested.json`, `${testDir}/afterNested.json`];
+const nestedYmlConfigs = [`${testDir}/beforeNested.yml`, `${testDir}/afterNested.yml`];
+const nestedIniConfigs = [`${testDir}/beforeNested.ini`, `${testDir}/afterNested.ini`];
 
-const configsToTest = [
-  [path.resolve(testDir, 'before.json'), path.resolve(testDir, 'after.json'), fs.readFileSync(path.resolve(testDir, 'expectedFlat'), 'utf-8')],
-  [path.resolve(testDir, 'before.yml'), path.resolve(testDir, 'after.yml'), fs.readFileSync(path.resolve(testDir, 'expectedFlat'), 'utf-8')],
-  [path.resolve(testDir, 'before.ini'), path.resolve(testDir, 'after.ini'), fs.readFileSync(path.resolve(testDir, 'expectedFlat'), 'utf-8')],
-  [path.resolve(testDir, 'beforeNested.json'), path.resolve(testDir, 'afterNested.json'), fs.readFileSync(path.resolve(testDir, 'expectedNested'), 'utf-8')],
-  [path.resolve(testDir, 'beforeNested.yml'), path.resolve(testDir, 'afterNested.yml'), fs.readFileSync(path.resolve(testDir, 'expectedNested'), 'utf-8')],
-  [path.resolve(testDir, 'beforeNested.ini'), path.resolve(testDir, 'afterNested.ini'), fs.readFileSync(path.resolve(testDir, 'expectedNested'), 'utf-8')],
+const configsToTestDefaultOutput = [
+  [...flatJsonConfigs, expectedFlat],
+  [...flatYmlConfigs, expectedFlat],
+  [...flatIniConfigs, expectedFlat],
+  [...nestedJsonConfigs, expectedNested],
+  [...nestedYmlConfigs, expectedNested],
+  [...nestedIniConfigs, expectedNested],
 ];
 
-test.each(configsToTest)('test genDiff', (beforeFileContent, afterFileContent, expected) => {
+const configsToTestFormattedOutput = [
+  [...flatJsonConfigs, fs.readFileSync(`${testDir}/expectedFlatPlain`, 'utf-8'), 'plain'],
+  [...nestedJsonConfigs, fs.readFileSync(`${testDir}/expectedPlain`, 'utf-8'), 'plain'],
+  [...nestedJsonConfigs, fs.readFileSync(`${testDir}/expectedJson`, 'utf-8'), 'json'],
+];
+
+test.each(configsToTestDefaultOutput)('test genDiff with default output', (beforeFileContent, afterFileContent, expected) => {
   expect(genDiff(beforeFileContent, afterFileContent)).toEqual(expected);
-  expect(genDiff(path.resolve(testDir, 'before.json'), path.resolve(testDir, 'after.json'), 'plain')).toEqual(fs.readFileSync(path.resolve(testDir, 'expectedFlatPlain'), 'utf-8'));
-  expect(genDiff(path.resolve(testDir, 'beforeNested.json'), path.resolve(testDir, 'afterNested.json'), 'plain')).toEqual(fs.readFileSync(path.resolve(testDir, 'expectedPlain'), 'utf-8'));
-  expect(genDiff(path.resolve(testDir, 'beforeNested.json'), path.resolve(testDir, 'afterNested.json'), 'json')).toEqual(fs.readFileSync(path.resolve(testDir, 'expectedJson'), 'utf-8'));
+});
+
+test.each(configsToTestFormattedOutput)('test genDiff with formatted output', (beforeFileContent, afterFileContent, expected, format) => {
+  expect(genDiff(beforeFileContent, afterFileContent, format)).toEqual(expected);
 });

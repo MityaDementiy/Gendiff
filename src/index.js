@@ -17,10 +17,7 @@ const getType = (key, firstObj, secondObj) => {
   if (_.has(firstObj, key) && _.has(secondObj, key) && firstObj[key] === secondObj[key]) {
     return 'unchanged';
   }
-  if (_.has(firstObj, key) && _.has(secondObj, key) && firstObj[key] !== secondObj[key]) {
-    return 'changed';
-  }
-  return null;
+  return 'changed';
 };
 
 const buildNode = (type, key, oldValue, newValue, getDiffFunc) => {

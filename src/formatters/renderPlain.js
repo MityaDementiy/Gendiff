@@ -27,10 +27,7 @@ const renderPlainDiff = (ast, path = '') => {
       if (node.type === 'changed') {
         return `Property '${_.trim(nestedPath, '.')}' was updated. From ${makeCorrectValue(node.oldValue)} to ${makeCorrectValue(node.newValue)}`;
       }
-      if (node.type === 'parent') {
-        return renderPlainDiff(node.children, nestedPath);
-      }
-      return null;
+      return renderPlainDiff(node.children, nestedPath);
     });
   return mappedAst.join('\n');
 };

@@ -3,30 +3,19 @@ import genDiff from '../src';
 
 const testDir = './__tests__/__fixtures__';
 const getDataFromFile = (fileName) => fs.readFileSync(`${testDir}/${fileName}`, 'utf-8');
-const expectedFlat = getDataFromFile('expectedFlat');
-const expectedNested = getDataFromFile('expectedNested');
-const expectedFlatPlain = getDataFromFile('expectedFlatPlain');
-const expectedNestedPlain = getDataFromFile('expectedPlain');
-const expectedNestedJson = getDataFromFile('expectedJson');
-const flatJsonConfigs = [`${testDir}/before.json`, `${testDir}/after.json`];
-const flatYmlConfigs = [`${testDir}/before.yml`, `${testDir}/after.yml`];
-const flatIniConfigs = [`${testDir}/before.ini`, `${testDir}/after.ini`];
-const nestedJsonConfigs = [`${testDir}/beforeNested.json`, `${testDir}/afterNested.json`];
-const nestedYmlConfigs = [`${testDir}/beforeNested.yml`, `${testDir}/afterNested.yml`];
-const nestedIniConfigs = [`${testDir}/beforeNested.ini`, `${testDir}/afterNested.ini`];
+const dataFormats = ['json', 'yml', 'ini'];
 
-const configsToTest = [
-  [...flatJsonConfigs, expectedFlat],
-  [...flatYmlConfigs, expectedFlat],
-  [...flatIniConfigs, expectedFlat],
-  [...nestedJsonConfigs, expectedNested],
-  [...nestedYmlConfigs, expectedNested],
-  [...nestedIniConfigs, expectedNested],
-  [...flatJsonConfigs, expectedFlatPlain, 'plain'],
-  [...nestedJsonConfigs, expectedNestedPlain, 'plain'],
-  [...nestedJsonConfigs, expectedNestedJson, 'json'],
-];
+test.each(dataFormats)('test genDiff with default output', (dataFormat) => {
+  const expected = getDataFromFile('expectedNested');
+  expect(genDiff(`${testDir}/beforeNested.${dataFormat}`, `${testDir}/afterNested.${dataFormat}`)).toEqual(expected);
+});
 
-test.each(configsToTest)('test genDiff', (beforeFileContent, afterFileContent, expected, format = 'default') => {
-  expect(genDiff(beforeFileContent, afterFileContent, format)).toEqual(expected);
+test.each(dataFormats)('test genDiff with plain output', (dataFormat) => {
+  const expected = getDataFromFile('expectedPlain');
+  expect(genDiff(`${testDir}/beforeNested.${dataFormat}`, `${testDir}/afterNested.${dataFormat}`, 'plain')).toEqual(expected);
+});
+
+test.each(dataFormats)('test genDiff with json output', (dataFormat) => {
+  const expected = getDataFromFile('expectedJson');
+  expect(genDiff(`${testDir}/beforeNested.${dataFormat}`, `${testDir}/afterNested.${dataFormat}`, 'json')).toEqual(expected);
 });

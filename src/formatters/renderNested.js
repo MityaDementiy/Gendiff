@@ -13,19 +13,18 @@ const stringify = (value, nesting) => {
 
 const renderDefaultDiff = (ast, nesting = 2) => {
   const mappedAst = ast.map((node) => {
-    if (node.type === 'parent') {
-      return `${makeTab(nesting)}${node.key}: ${stringify(renderDefaultDiff(node.children, nesting + 2))}`;
+    switch (node.type) {
+      case 'parent':
+        return `${makeTab(nesting)}${node.key}: ${stringify(renderDefaultDiff(node.children, nesting + 2))}`;
+      case 'added':
+        return `${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
+      case 'deleted':
+        return `${makeTab(nesting - 1)}- ${node.key}: ${stringify(node.oldValue, nesting)}`;
+      case 'unchanged':
+        return `${makeTab(nesting)}${node.key}: ${stringify(node.oldValue, nesting)}`;
+      default:
+        return `${makeTab(nesting - 1)}- ${node.key}: ${stringify(node.oldValue, nesting)}\n${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
     }
-    if (node.type === 'added') {
-      return `${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
-    }
-    if (node.type === 'deleted') {
-      return `${makeTab(nesting - 1)}- ${node.key}: ${stringify(node.oldValue, nesting)}`;
-    }
-    if (node.type === 'unchanged') {
-      return `${makeTab(nesting)}${node.key}: ${stringify(node.oldValue, nesting)}`;
-    }
-    return `${makeTab(nesting - 1)}- ${node.key}: ${stringify(node.oldValue, nesting)}\n${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
   });
   const result = `{\n${mappedAst.join('\n')}\n${makeTab(nesting - 2)}}`;
   return result;

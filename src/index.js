@@ -4,51 +4,49 @@ import path from 'path';
 import parse from './parsers';
 import render from './formatters/renderers';
 
-const getType = (key, firstObj, secondObj) => {
-  if (_.isObject(firstObj[key]) && _.isObject(secondObj[key])) {
-    return 'parent';
-  }
-  if (_.has(firstObj, key) && !_.has(secondObj, key)) {
-    return 'deleted';
-  }
-  if (!_.has(firstObj, key) && _.has(secondObj, key)) {
-    return 'added';
-  }
-  if (_.has(firstObj, key) && _.has(secondObj, key) && firstObj[key] === secondObj[key]) {
-    return 'unchanged';
-  }
-  return 'changed';
-};
+const typeActions = [
+  {
+    type: 'parent',
+    check: (key, objBefore, objAfter) => _.isObject(objBefore[key]) && _.isObject(objAfter[key]),
+    process: (oldValue, newValue, getDiffFunc) => ({ children: getDiffFunc(oldValue, newValue) }),
+  },
+  {
+    type: 'deleted',
+    check: (key, objBefore, objAfter) => _.has(objBefore, key) && !_.has(objAfter, key),
+    process: (oldValue, newValue) => ({ oldValue, newValue }),
+  },
+  {
+    type: 'added',
+    check: (key, objBefore, objAfter) => !_.has(objBefore, key) && _.has(objAfter, key),
+    process: (oldValue, newValue) => ({ oldValue, newValue }),
+  },
+  {
+    type: 'unchanged',
+    check: (key, objBefore, objAfter) => objBefore[key] === objAfter[key],
+    process: (oldValue, newValue) => ({ oldValue, newValue }),
+  },
+  {
+    type: 'changed',
+    check: (key, objBefore, objAfter) => objBefore[key] !== objAfter[key],
+    process: (oldValue, newValue) => ({ oldValue, newValue }),
+  },
+];
 
-const buildNode = (type, key, oldValue, newValue, getDiffFunc) => {
-  if (type === 'parent') {
-    const children = getDiffFunc(oldValue, newValue);
-    return {
-      key,
-      type,
-      children,
-    };
-  }
-  return {
-    key,
-    type,
-    oldValue,
-    newValue,
-  };
-};
+const getTypeActions = (key, objBefore, objAfter) => typeActions
+  .find(({ check }) => check(key, objBefore, objAfter));
 
-const getDiff = (firstConfig, secondConfig) => {
-  const firstKeys = Object.keys(firstConfig);
-  const secondKeys = Object.keys(secondConfig);
-  const unitedKeys = _.union(firstKeys, secondKeys);
-  const innerStructure = unitedKeys.map((key) => {
-    const type = getType(key, firstConfig, secondConfig);
-    const oldValue = firstConfig[key];
-    const newValue = secondConfig[key];
-    const node = buildNode(type, key, oldValue, newValue, getDiff);
+const getDiff = (beforeConfig, afterConfig) => {
+  const beforeConfigKeys = Object.keys(beforeConfig);
+  const afterConfigKeys = Object.keys(afterConfig);
+  const unitedKeys = _.union(beforeConfigKeys, afterConfigKeys);
+  const diffStructure = unitedKeys.map((key) => {
+    const { type, process } = getTypeActions(key, beforeConfig, afterConfig);
+    const oldValue = beforeConfig[key];
+    const newValue = afterConfig[key];
+    const node = { key, type, ...process(oldValue, newValue, getDiff) };
     return node;
   });
-  return innerStructure;
+  return diffStructure;
 };
 
 export default (beforeConfig, afterConfig, format) => {

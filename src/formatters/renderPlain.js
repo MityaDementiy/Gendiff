@@ -4,10 +4,7 @@ const makeCorrectValue = (val) => {
   if (_.isObject(val)) {
     return '[complex value]';
   }
-  if (typeof val === 'boolean') {
-    return val;
-  }
-  if (typeof val === 'number') {
+  if (typeof val === 'boolean' || typeof val === 'number') {
     return val;
   }
   return `'${val}'`;
@@ -18,18 +15,17 @@ const renderPlainDiff = (ast, path = '') => {
     .filter((node) => node.type !== 'unchanged')
     .map((node) => {
       const nestedPath = `${path}.${node.key}`;
-      if (node.type === 'deleted') {
-        return `Property '${_.trim(nestedPath, '.')}' was removed`;
+      switch (node.type) {
+        case 'deleted':
+          return `Property '${_.trim(nestedPath, '.')}' was removed`;
+        case 'added':
+          return `Property '${_.trim(nestedPath, '.')}' was added with value: ${makeCorrectValue(node.newValue)}`;
+        case 'changed':
+          return `Property '${_.trim(nestedPath, '.')}' was updated. From ${makeCorrectValue(node.oldValue)} to ${makeCorrectValue(node.newValue)}`;
+        default:
+          return renderPlainDiff(node.children, nestedPath);
       }
-      if (node.type === 'added') {
-        return `Property '${_.trim(nestedPath, '.')}' was added with value: ${makeCorrectValue(node.newValue)}`;
-      }
-      if (node.type === 'changed') {
-        return `Property '${_.trim(nestedPath, '.')}' was updated. From ${makeCorrectValue(node.oldValue)} to ${makeCorrectValue(node.newValue)}`;
-      }
-      return renderPlainDiff(node.children, nestedPath);
     });
   return mappedAst.join('\n');
 };
-
 export default renderPlainDiff;

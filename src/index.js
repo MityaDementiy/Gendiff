@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
-import parseFile from './parsers';
+import parse from './parsers';
 import render from './formatters/renderers';
 
 const getType = (key, firstObj, secondObj) => {
@@ -51,11 +51,11 @@ const getDiff = (firstConfig, secondConfig) => {
   return innerStructure;
 };
 
-export default (firstConfig, secondConfig, format) => {
-  const firstExtName = path.extname(firstConfig);
-  const secondExtName = path.extname(secondConfig);
-  const beforeFileContent = parseFile(fs.readFileSync(firstConfig, 'utf-8'), firstExtName);
-  const afterFileContent = parseFile(fs.readFileSync(secondConfig, 'utf-8'), secondExtName);
+export default (beforeConfig, afterConfig, format) => {
+  const beforeFileExtension = path.extname(beforeConfig);
+  const afterFileExtension = path.extname(afterConfig);
+  const beforeFileContent = parse(fs.readFileSync(beforeConfig, 'utf-8'), beforeFileExtension);
+  const afterFileContent = parse(fs.readFileSync(afterConfig, 'utf-8'), afterFileExtension);
   const result = render(getDiff(beforeFileContent, afterFileContent), format);
   return result;
 };

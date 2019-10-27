@@ -7,6 +7,6 @@ const mapping = {
   '.ini': ini.parse,
 };
 
-const parse = (fileName, extension) => mapping[extension](fileName);
+const parse = (configName, extension) => mapping[extension](configName);
 
 export default parse;

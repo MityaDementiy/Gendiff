@@ -3,12 +3,12 @@ import _ from 'lodash';
 const makeTab = (nestingLevel) => '  '.repeat(nestingLevel);
 
 const stringify = (value, nesting) => {
-  if (_.isObject(value)) {
-    const keys = Object.keys(value);
-    const result = keys.map((key) => `${makeTab(nesting + 2)}${key}: ${value[key]}`).join('\n');
-    return `{\n${result}\n${makeTab(nesting)}}`;
+  if (!_.isObject(value)) {
+    return value;
   }
-  return value;
+  const keys = Object.keys(value);
+  const result = keys.map((key) => `${makeTab(nesting + 2)}${key}: ${value[key]}`).join('\n');
+  return `{\n${result}\n${makeTab(nesting)}}`;
 };
 
 const renderDefaultDiff = (ast, nesting = 2) => {

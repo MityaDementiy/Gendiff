@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-const makeCorrectValue = (val) => {
+const stringify = (val) => {
   if (_.isObject(val)) {
     return '[complex value]';
   }
@@ -19,9 +19,9 @@ const renderPlainDiff = (ast, path = '') => {
         case 'deleted':
           return `Property '${_.trim(nestedPath, '.')}' was removed`;
         case 'added':
-          return `Property '${_.trim(nestedPath, '.')}' was added with value: ${makeCorrectValue(node.newValue)}`;
+          return `Property '${_.trim(nestedPath, '.')}' was added with value: ${stringify(node.newValue)}`;
         case 'changed':
-          return `Property '${_.trim(nestedPath, '.')}' was updated. From ${makeCorrectValue(node.oldValue)} to ${makeCorrectValue(node.newValue)}`;
+          return `Property '${_.trim(nestedPath, '.')}' was updated. From ${stringify(node.oldValue)} to ${stringify(node.newValue)}`;
         default:
           return renderPlainDiff(node.children, nestedPath);
       }

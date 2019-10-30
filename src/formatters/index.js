@@ -1,13 +1,13 @@
-import renderDefaultDiff from './renderNested';
+import renderNestedDiff from './renderNested';
 import renderPlainDiff from './renderPlain';
 import renderJsonDiff from './renderJson';
 
 const mapping = {
-  default: renderDefaultDiff,
+  nested: renderNestedDiff,
   plain: renderPlainDiff,
   json: renderJsonDiff,
 };
 
-const render = (ast, format = 'default') => mapping[format](ast);
+const render = (ast, format = 'nested') => mapping[format](ast);
 
 export default render;

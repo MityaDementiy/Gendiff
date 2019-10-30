@@ -49,11 +49,23 @@ const getDiff = (beforeConfig, afterConfig) => {
   return diffStructure;
 };
 
+const getDataType = (config) => {
+  const type = path.extname(config);
+  switch (type) {
+    case '.yml':
+      return 'yml';
+    case '.ini':
+      return 'ini';
+    default:
+      return 'json';
+  }
+};
+
 export default (beforeConfig, afterConfig, format) => {
-  const beforeFileExtension = path.extname(beforeConfig);
-  const afterFileExtension = path.extname(afterConfig);
-  const beforeFileContent = parse(fs.readFileSync(beforeConfig, 'utf-8'), beforeFileExtension);
-  const afterFileContent = parse(fs.readFileSync(afterConfig, 'utf-8'), afterFileExtension);
+  const beforeDataType = getDataType(beforeConfig);
+  const afterDataType = getDataType(afterConfig);
+  const beforeFileContent = parse(fs.readFileSync(beforeConfig, 'utf-8'), beforeDataType);
+  const afterFileContent = parse(fs.readFileSync(afterConfig, 'utf-8'), afterDataType);
   const result = render(getDiff(beforeFileContent, afterFileContent), format);
   return result;
 };

@@ -56,8 +56,10 @@ const getDataType = (config) => {
       return 'yml';
     case '.ini':
       return 'ini';
-    default:
+    case '.json':
       return 'json';
+    default:
+      throw new Error('Error! Can not process this data type or this data type is invalid');
   }
 };
 

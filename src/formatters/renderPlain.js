@@ -22,8 +22,10 @@ const renderPlainDiff = (ast, path = '') => {
           return `Property '${_.trim(nestedPath, '.')}' was added with value: ${stringify(node.newValue)}`;
         case 'changed':
           return `Property '${_.trim(nestedPath, '.')}' was updated. From ${stringify(node.oldValue)} to ${stringify(node.newValue)}`;
-        default:
+        case 'parent':
           return renderPlainDiff(node.children, nestedPath);
+        default:
+          throw new Error('Error! Invalid node type');
       }
     });
   return mappedAst.join('\n');

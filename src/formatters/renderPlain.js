@@ -25,7 +25,7 @@ const renderPlainDiff = (ast, path = '') => {
         case 'parent':
           return renderPlainDiff(node.children, nestedPath);
         default:
-          throw new Error('Error! Invalid node type');
+          throw new Error(`Error! '${node.type}' is invalid node type`);
       }
     });
   return mappedAst.join('\n');

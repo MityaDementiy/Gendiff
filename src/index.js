@@ -2,7 +2,7 @@ import _ from 'lodash';
 import fs from 'fs';
 import path from 'path';
 import parse from './parsers';
-import render from './formatters/index';
+import render from './formatters';
 
 const typeActions = [
   {
@@ -49,19 +49,7 @@ const getDiff = (beforeConfig, afterConfig) => {
   return diffStructure;
 };
 
-const getDataType = (config) => {
-  const type = path.extname(config);
-  switch (type) {
-    case '.yml':
-      return 'yml';
-    case '.ini':
-      return 'ini';
-    case '.json':
-      return 'json';
-    default:
-      throw new Error('Error! Can not process this data type or this data type is invalid');
-  }
-};
+const getDataType = (config) => path.extname(config).slice(1);
 
 export default (beforeConfig, afterConfig, format) => {
   const beforeDataType = getDataType(beforeConfig);

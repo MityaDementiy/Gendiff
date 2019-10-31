@@ -25,7 +25,7 @@ const renderNestedDiff = (ast, nesting = 2) => {
       case 'changed':
         return `${makeTab(nesting - 1)}- ${node.key}: ${stringify(node.oldValue, nesting)}\n${makeTab(nesting - 1)}+ ${node.key}: ${stringify(node.newValue, nesting)}`;
       default:
-        throw new Error('Error! Invalid node type');
+        throw new Error(`Error! '${node.type}' is invalid node type`);
     }
   });
   const result = `{\n${mappedAst.join('\n')}\n${makeTab(nesting - 2)}}`;
